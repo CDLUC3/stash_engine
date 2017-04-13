@@ -195,7 +195,7 @@ module StashEngine
       clnt.set_basic_auth(nil, username, password)
       # TODO: remove this once Merritt has fixed their certs
       clnt.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE # if Rails.env == 'stage'
-      clnt.ssl_config.set_trust_ca(APP_CONFIG.ssl_cert_file) if APP_CONFIG.ssl_cert_file
+      # clnt.ssl_config.set_trust_ca(APP_CONFIG.ssl_cert_file) if APP_CONFIG.ssl_cert_file
       clnt
     end
 
