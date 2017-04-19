@@ -6,14 +6,15 @@
   <%= form_for(share, remote: true, authenticity_token: true, html: { class: 'c-input' }) do |f| %>
       <div>
         <%= text_field_tag :sharing_link, share.sharing_link,  id: 'sharing_link', class: 'c-input__text', disabled: true,
-                         style: 'width:700px; display: inline-block;' %>
+                         style: 'width:650px; display: inline-block;' %>
         <%= f.hidden_field(:secret_id) %>
-        <input type="image" src="<%= image_path('stash_engine/icon_clipboard') %>"
+        <input type="button"
+                value="Copy link"
                 data-clipboard-target='sharing_link'
                 data-clipboard-text='Default clipboard text from attribute'
                 id='d_clip_button'
-                title='Click me to copy to clipboard.'
-                style='width:30px; height:30px;'>
+                class="o-button__plain-text2"
+                title='Click me to copy to clipboard.'>
         </input>
       </div>
 
@@ -30,10 +31,10 @@
 
   $('#d_clip_button').click(function(event) {
     event.preventDefault();
-    $(this).attr('src', '<%= image_path('stash_engine/icon_clipboard2') %>');
+    // $(this).attr('src', '<%= image_path('stash_engine/icon_clipboard2') %>');
     $(this).fadeOut(20).fadeIn(200);
-    setTimeout(function() {
-      $('#d_clip_button').attr('src', '<%= image_path('stash_engine/icon_clipboard') %>');
-    }, 500);
+    // setTimeout(function() {
+    //  $('#d_clip_button').attr('src', '<%= image_path('stash_engine/icon_clipboard') %>');
+    // }, 500);
   });
 </script>

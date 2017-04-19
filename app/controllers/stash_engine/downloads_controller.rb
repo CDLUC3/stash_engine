@@ -14,11 +14,11 @@ module StashEngine
       if @resource.under_embargo?
         # if you're the owner do streaming download
         if current_user && current_user.id == @resource.user_id
-          setup_async_download_variable #which may redirect to different page in certain circumstances
+          return if setup_async_download_variable == false #which may redirect to different page in certain circumstances
           if @async_download
             redirect_to landing_show_path(
                       id: "#{@resource.identifier.identifier_type.downcase}:#{@resource.identifier.identifier}",
-                      big: 'showme')
+                      big: 'showme') and return
           else
             stream_response(@resource.merritt_producer_download_uri,
               @resource.tenant.repository.username,
@@ -32,11 +32,11 @@ module StashEngine
       else
         # not under embargo and public
         # redirect to the producer file download link
-        setup_async_download_variable #which may redirect to different page in certain circumstances
+        return if setup_async_download_variable == false #which may redirect to different page in certain circumstances
         if @async_download
           redirect_to landing_show_path(
                           id: "#{@resource.identifier.identifier_type.downcase}:#{@resource.identifier.identifier}",
-                          big: 'showme')
+                          big: 'showme') and return
         else
           redirect_to @resource.merritt_producer_download_uri and return
         end
@@ -68,13 +68,13 @@ module StashEngine
 
       @resource = @shares.first.resource
       if @resource.under_embargo?
-        setup_async_download_variable #which may redirect to different page in certain circumstances
+        return if setup_async_download_variable == false #which may redirect to different page in certain circumstances
 
         if @async_download
           #redirect to the form for filling in their email address to get an email
           redirect_to landing_show_path(
                           id: "#{@resource.identifier.identifier_type.downcase}:#{@resource.identifier.identifier}",
-                          big: 'showme', secret_id: params[:id])
+                          big: 'showme', secret_id: params[:id]) and return
         else
           @resource.increment_downloads
           stream_response(@resource.merritt_producer_download_uri,
@@ -84,7 +84,7 @@ module StashEngine
       else
         redirect_to landing_show_path(
           id: "#{@resource.identifier.identifier_type.downcase}:#{@resource.identifier.identifier}"),
-          notice: 'The dataset is now published, please use the download button on the right side.'
+          notice: 'The dataset is now published, please use the download button on the right side.' and return
       end
     end
 
@@ -103,11 +103,12 @@ module StashEngine
           flash[:notice] = "This dataset was recently submitted and downloads are not yet available. " +
               "Downloads generally become available in less than 2 hours."
           redirect_to landing_show_path(
-                          id: "#{@resource.identifier.identifier_type.downcase}:#{@resource.identifier.identifier}")
+                          id: "#{@resource.identifier.identifier_type.downcase}:#{@resource.identifier.identifier}") and return false
         else
           raise ex
         end
       end
+      true
     end
 
     # TODO: specific to Merritt and hacky
